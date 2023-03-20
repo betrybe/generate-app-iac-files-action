@@ -1,0 +1,32 @@
+name: 'Gera os arquivos IaC para uma nova aplicação'
+description: 'Gera o arquivo `terragrunt.hcl`, os values files do Helm e faz o push'
+inputs:
+  app_name:
+    description: 'GitHub repository directory that contains the dataset collections to be restored.'
+    default: 'assets'
+    required: true
+  squad_name:
+    description: 'GitHub repository directory that contains the student MQL scripts.'
+    default: 'challenges'
+    required: true
+  betrybe_subdomain:
+    description: 'Pull Request author username.'
+    required: false
+
+outputs:
+  result:
+    description: 'Evaluation JSON results in base64 format.'
+    value: ${{ steps.run_evaluator.outputs.result }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: run_evaluator
+      shell: bash
+      run: ${{ github.action_path }}/scripts/evaluate.sh
+      env:
+        APP_NAME: ${{ inputs.app_name }}
+        SQUAD_NAME: ${{ inputs.squad_name }}
+        BETRYBE_SUBDOMAIN: ${{ inputs.betrybe_subdomain }}
+        ADMIN_TOKEN: ${{ inputs.admin_token }}
+        ACTION_PATH: ${{ github.action_path }}
