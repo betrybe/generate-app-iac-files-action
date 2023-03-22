@@ -23,7 +23,7 @@ runs:
   steps:
     - id: run_evaluator
       shell: bash
-      run: ${{ github.action_path }}/scripts/evaluate.sh
+      run: ${{ github.action_path }}/generate-iac-files.sh
       env:
         APP_NAME: ${{ inputs.app_name }}
         SQUAD_NAME: ${{ inputs.squad_name }}
