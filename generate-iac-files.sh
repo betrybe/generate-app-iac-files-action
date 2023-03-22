@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 echo "Para adicionar mais recuros consulte o README.md edite o arquivo $APP_NAME/terragrunt.hcl"
 
 mkdir "$APP_NAME"
@@ -35,5 +37,6 @@ EOF
 git config --global user.name 'trybe-tech-ops'
 git config --global user.email 'trybe-tech-ops@users.noreply.github.com'
 git checkout -b $APP_NAME
-git commit -am "Cria nova aplicação $APP_NAME"
+git add $APP_NAME
+git commit -m "Cria nova aplicação $APP_NAME"
 git push origin $APP_NAME

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 app_name=$1
 
