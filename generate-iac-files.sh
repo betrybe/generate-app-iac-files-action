@@ -1,18 +1,17 @@
 #!/bin/bash
 set -e
 
-echo "Para adicionar mais recuros consulte o README.md edite o arquivo $APP_NAME/terragrunt.hcl"
-
+echo "::group::Gerando arquivo '$APP_NAME/terragrunt.hcl'"
 mkdir "$APP_NAME"
-touch "$APP_NAME/terragrunt.hcl"
+cd "$APP_NAME"
+touch terragrunt.hcl
 
 prod_subdomain=""
 if [[ ! -z "$BETRYBE_SUBDOMAIN" ]]; then
   prod_subdomain="\"$BETRYBE_SUBDOMAIN\""
 fi
 
-# Create Terragrunt file
-cat > "$APP_NAME/terragrunt.hcl" << EOF
+cat > terragrunt.hcl << EOF
 include root {
   path = find_in_parent_folders()
 }
@@ -30,19 +29,19 @@ inputs = {
   production_subdomains = [$prod_subdomain]
 }
 EOF
+echo "::endgroup::"
 
-# Create Helm values files
-root_path="$(git rev-parse --show-toplevel)"
-echo "Criando values files para $root_path/$app_name"
-cp -r $root_path/chart/values*.yaml "$root_path/$app_name/"
+echo "::group::Criando values files do Helm para '$APP_NAME'"
+cp -r ../chart/values*.yaml ./
 
-cd "$root_path/$app_name"
-find ./*.yaml -type f -exec sed -i "s/APP_NAME/$app_name/g" {} \;
+find ./*.yaml -type f -exec sed -i "s/APP_NAME/$APP_NAME/g" {} \;
+echo "::endgroup::"
 
-# Create new branch, commit new file and push to remote
+echo "::group::Criando nova branch, fazendo commit e push no repositório @$GITHUB_REPOSITORY"
 git config --global user.name 'trybe-tech-ops'
 git config --global user.email 'trybe-tech-ops@users.noreply.github.com'
-git checkout -b $APP_NAME
-git add $APP_NAME
+git checkout -b "$APP_NAME"
+git add .
 git commit -m "Cria nova aplicação $APP_NAME"
-git push origin $APP_NAME
+git push origin "$APP_NAME"
+echo "::endgroup::"
