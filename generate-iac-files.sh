@@ -32,8 +32,14 @@ inputs = {
 EOF
 
 # Create Helm values files
-"$ACTION_PATH/create-values-files.sh" $APP_NAME
+root_path="$(git rev-parse --show-toplevel)"
+echo "Criando values files para $root_path/$app_name"
+cp -r $root_path/chart/values*.yaml "$root_path/$app_name/"
 
+cd "$root_path/$app_name"
+find ./*.yaml -type f -exec sed -i "s/APP_NAME/$app_name/g" {} \;
+
+# Create new branch, commit new file and push to remote
 git config --global user.name 'trybe-tech-ops'
 git config --global user.email 'trybe-tech-ops@users.noreply.github.com'
 git checkout -b $APP_NAME
