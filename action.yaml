@@ -12,11 +12,10 @@ inputs:
   betrybe_subdomain:
     description: 'Pull Request author username.'
     required: false
-
-outputs:
-  result:
-    description: 'Evaluation JSON results in base64 format.'
-    value: ${{ steps.run_evaluator.outputs.result }}
+  admin_token:
+    description: 'Organization admin token with admin:org scope'
+    required: true
+    default: ''
 
 runs:
   using: 'composite'
