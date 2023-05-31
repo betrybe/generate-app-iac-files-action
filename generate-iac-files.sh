@@ -22,7 +22,7 @@ inputs = {
 
   argocd_deployment = {
     homologation = false
-    staging      = true
+    staging      = false
     production   = false
   }
 
