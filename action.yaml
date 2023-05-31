@@ -2,25 +2,33 @@ name: 'Gera os arquivos IaC para uma nova aplicação'
 description: 'Gera o arquivo `terragrunt.hcl`, os values files do Helm e faz o push'
 inputs:
   app_name:
-    description: 'GitHub repository directory that contains the dataset collections to be restored.'
-    default: 'assets'
+    description: 'Nome do novo app.'
     required: true
   squad_name:
-    description: 'GitHub repository directory that contains the student MQL scripts.'
-    default: 'challenges'
+    description: 'Nome do squad responsável pelo projeto.'
+    default: ''
     required: true
   betrybe_subdomain:
-    description: 'Pull Request author username.'
+    description: 'Subdomain {}.betrybe.com a ser criado no Cloudflare.'
+    required: false
+  action:
+    description: 'Qual ação fazer'
+    default: 'terragrunt'
+    required: false
+  dockerfile_template:
+    description: 'Qual template de dockerfile usar'
+    default: 'Dockerfile'
     required: false
   admin_token:
-    description: 'Organization admin token with admin:org scope'
+    description: 'Organization admin token with `admin:org`, `repo` and `workflow` scope.'
     required: true
     default: ''
 
 runs:
   using: 'composite'
   steps:
-    - id: run_evaluator
+    - id: generate_terragrunt
+      if: inputs.action == 'terragrunt'
       shell: bash
       run: ${{ github.action_path }}/generate-iac-files.sh
       env:
@@ -28,4 +36,14 @@ runs:
         SQUAD_NAME: ${{ inputs.squad_name }}
         BETRYBE_SUBDOMAIN: ${{ inputs.betrybe_subdomain }}
         ADMIN_TOKEN: ${{ inputs.admin_token }}
+        ACTION_PATH: ${{ github.action_path }}
+
+    - id: generate_workflows
+      if: inputs.action == 'workflows'
+      shell: bash
+      run: ${{ github.action_path }}/generate-workflows-files.sh
+      env:
+        APP_NAME: ${{ inputs.app_name }}
+        ADMIN_TOKEN: ${{ inputs.admin_token }}
+        DOCKERFILE_TEMPLATE: ${{ inputs.dockerfile_template }}
         ACTION_PATH: ${{ github.action_path }}
